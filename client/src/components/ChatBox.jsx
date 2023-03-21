@@ -20,6 +20,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [socketConnected, setSocketConnected] = useState(false);
+    const[typing, setTyping] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
 
     const defaultOptions = {
@@ -27,9 +28,9 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
         autoplay: true,
         animationData: animationData,
         rendererSettings: {
-            preserveAspectRatio: "xMidYMid slice"
-        }
-    }
+          preserveAspectRatio: "xMidYMid slice",
+        },
+    };
     useEffect(() => {
         socket = io(url);
         socket.emit("setup", user);
@@ -79,8 +80,8 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
 
         if (!socketConnected) { return };
 
-        if (!isTyping) {
-            setIsTyping(true);
+        if (!typing) {
+            setTyping(true);
             socket.emit('typing', { selectedChat, user });
         }
         let lastTypingTime = new Date().getTime();
@@ -89,9 +90,9 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
             let currentTime = new Date().getTime();
             let timeDiff = currentTime - lastTypingTime;
 
-            if (timeDiff >= timer && isTyping) {
+            if (timeDiff >= timer && typing) {
                 socket.emit('stop-typing', { selectedChat, user });
-                setIsTyping(false);
+                setTyping(false);
             }
         }, timer)
     }
@@ -101,7 +102,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
         if (!newMsg) {
             return;
         }
-        socket.emit('stop typing', { selectedChat, user });
+        socket.emit('stop-typing', { selectedChat, user });
         await axios.post('/new-msg', {
             content: newMsg,
             chatId: selectedChat._id
@@ -131,7 +132,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                             icon={<ArrowBackIcon />}
                             onClick={() => setSelectedChat("")}
                         />
-                        <div class="text-2xl font-semibold">
+                        <div className="text-2xl font-semibold">
                             {!selectedChat.isGroupChat ? getSender(user, selectedChat.users) : selectedChat.chatName}
                         </div>
                         {!selectedChat.isGroupChat ?
@@ -142,7 +143,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                             <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                         }
                     </Box>
-                    <div className={`overflow-scroll ${loading && 'flex items-center justify-center'}`} style={{ height: 'fit-content' }} >
+                    <div className={`overflow-scroll flex flex-col ${loading && 'items-center justify-center'}`} style={{ height: '100%', width: '100%', justifyContent:'flex-end' }} >
                         {loading ?
                             <Spinner size="xl" w="20" h="20" />
                             :

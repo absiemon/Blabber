@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
-import { useToast } from '@chakra-ui/react'
+import {  useToast } from '@chakra-ui/react'
 import axios from "axios";
 import { Box, Text, Button, Stack } from "@chakra-ui/react";
 import SearchLoading from "./SearchLoading";
@@ -11,13 +11,16 @@ import GroupChatModal from "./components/GroupChatModal";
 
 export default function Contacts({fetchAgain}) {
     const { user, selectedChat, setSelectedChat, chats, setChats } = useContext(UserContext);
-
+    const [loading, setLoading] = useState(false);
     const toast = useToast();
+    
     useEffect(() => {
+        setLoading(true);
         axios.get('/all-chats').then(({ data }) => {
-            console.log(data);
             setChats(data);
+            setLoading(false);
         }).catch(err => {
+            setLoading(false);
             toast({
                 position: 'top-right',
                 title: 'Server error',
@@ -47,10 +50,10 @@ export default function Contacts({fetchAgain}) {
                     </Button>
                 </GroupChatModal>
                 <Box d="flex" flexDir="column" p={3}  w="100%" h="100%" borderRadius="lg" overflowY="hidden">
-                    {chats ? (
+                    {!loading ? chats && (
                         <Stack overflowY="scroll">
                             {chats?.map((chat) => (
-                                <div key={chat?._id} onClick={() => setSelectedChat(chat)} className={"border-b border-gray-100 flex items-center gap-2 cursor-pointer rounded-md " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
+                                <div key={chat?._id} onClick={() => setSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
                                     {(chat._id === selectedChat?._id) && (
                                         <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
                                     )}
