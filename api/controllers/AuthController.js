@@ -102,7 +102,8 @@ module.exports.getAllUsers = async(req, res) => {
 
 module.exports.logout = async(req, res) => {
     try {
-        res.cookie('token', '').json(true);
+        res.clearCookie('token');
+        res.json(true);
     } catch (error) {
         res.status(422).json(err);
     }

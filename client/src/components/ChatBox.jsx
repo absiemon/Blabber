@@ -1,4 +1,4 @@
-import { ArrowBackIcon, SettingsIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import { Box, IconButton, Spinner, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useState, useContext, useEffect, useRef } from "react"
@@ -8,13 +8,15 @@ import ScrollableChat from "./ScrollableChat";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
 import io from "socket.io-client";
 import Lottie from 'react-lottie';
+import send from "../assets/send.png";
 import animationData from "../typing.json"
+import ChatSettings from "./ChatSettings";
 const url = "http://localhost:8000";
 let socket, selectedChatCompare;
 
 export default function ChatBox({ fetchAgain, setFetchAgain }) {
 
-    const { user, selectedChat, setSelectedChat, notification, setNotification } = useContext(UserContext);
+    const { user, selectedChat, setSelectedChat, notification, setNotification, fetchMsg } = useContext(UserContext);
     const toast = useToast();
     const [newMsg, setNewMsg] = useState('');
     const [messages, setMessages] = useState([]);
@@ -47,6 +49,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
             setLoading(true)
             axios.get(`/all-msg/${selectedChat._id}`)
                 .then(({ data }) => {
+                    console.log(data)
                     setMessages(data);
                     setLoading(false);
                 }).catch((err) => {
@@ -58,7 +61,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
             selectedChatCompare = selectedChat;
         }
 
-    }, [selectedChat])
+    }, [selectedChat, fetchMsg])
 
     useEffect(() => {
         socket.on('msg-recieved', (newMsg) => {
@@ -136,9 +139,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                             {!selectedChat.isGroupChat ? getSender(user, selectedChat.users) : selectedChat.chatName}
                         </div>
                         {!selectedChat.isGroupChat ?
-                            <button className="h-10 w-10 bg-blue-200 rounded-md ">
-                                <SettingsIcon h="6" w="6" />
-                            </button>
+                            <ChatSettings fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>
                             :
                             <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                         }
@@ -160,10 +161,8 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                     <form className="flex gap-2 p-2" onSubmit={sendMsg}>
 
                         <input type="text" placeholder="Type your message here" className="bg-white flex-grow border p-2" value={newMsg} onChange={typingHandler} />
-                        <button className="bg-blue-500 p-2 text-white" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.7759.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                            </svg>
+                        <button className="bg-blue-300 text-white rounded-sm" type="submit">
+                            <img src={send} alt="i" className="h-10 w-10 "/>
                         </button>
                     </form>
                 </>

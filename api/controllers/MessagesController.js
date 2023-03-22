@@ -46,3 +46,17 @@ module.exports.getAllMessages = async(req, res)=>{
         throw new Error(error);
     }
 }
+
+module.exports.deleteAllMessages = async (req, res)=>{
+    const {chatId} = req.body;
+    try {
+        await Message.deleteMany({chat : chatId}).then((data)=>{
+            res.json(true);
+        }).catch(err=>{
+            res.json(false);
+        })
+    } catch (error) {
+        res.status(422).json(error);
+        throw new Error(error);
+    }
+}

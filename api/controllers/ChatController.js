@@ -1,6 +1,7 @@
 const User = require("../models/User.js");
 const { getUserDataFromToken } = require('../config/verify.js');
 const Chat = require("../models/Chat.js");
+const Message = require("../models/Message.js");
 
 module.exports.chats = async (req, res) => {
     // if the chat exists with this userId then return else create a chat.
@@ -140,10 +141,38 @@ module.exports.removeFromGroup = async(req, res)=>{
         .populate("groupAdmin", "-password");
 
         res.json(chat);
-        res.status(422).json(err);
-        throw new Error(err.message);
     } catch (error) {
         res.status(422).json(error);
-        
+    }
+}
+
+
+module.exports.deleteChat = async(req, res)=>{
+    const{chatId} = req.body;
+    try {
+        await Message.deleteMany({chat : chatId}).then( async (data)=>{
+            await Chat.findByIdAndDelete(chatId).then((data)=>{
+                res.json(true);
+            }).catch(err=>{
+                res.status(500).json(err);
+            })
+        }).catch(err=>{
+            res.status(500).json(err);
+        })
+    } catch (error) {
+        res.status(422).json(error);
+    }
+}
+
+module.exports.blockChat = async(req, res)=>{
+    const {chatId} = req.body;
+    try {
+        await Chat.findByIdAndUpdate(chatId, {isBlocked: true}, {new:true}).then((data)=>{
+            res.json(true)
+        }).catch(err=>{
+            res.status(500).json(err);
+        })
+    } catch (error) {
+        res.status(422).json(error);
     }
 }

@@ -12,7 +12,7 @@ export default function LoginPage() {
     const toast = useToast()
     const [loading, setLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
-    const { user, setUser, setIsLogin, setReady } = useContext(UserContext)
+    const { user, setUser, setIsLogin } = useContext(UserContext)
     const [credentials, setCredentials] = useState({
         username: "", password: ""
     })
@@ -39,7 +39,7 @@ export default function LoginPage() {
         await axios.post('/login', {
             username, password
         }).then((res) => {
-            console.log(res.data);
+            localStorage.setItem("userInfo", JSON.stringify(res.data));
             setUser(res.data);
             setLoading(false)
             navigate('/chats')

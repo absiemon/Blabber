@@ -16,14 +16,14 @@ import {Effect} from 'react-notification-badge';
 
 
 export default function Header() {
-    const { setReady, setUser, user, notification,setNotification, selectedChat, setSelectedChat  } = useContext(UserContext);
+    const {  setUser, user, notification,setNotification, selectedChat, setSelectedChat  } = useContext(UserContext);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const navigate = useNavigate();
-    const { pathname } = useLocation();
     const logout = async () => {
-        await axios.post('/logout').then((res) => {
+        await axios.post('/logout').then(() => {
             setUser(null);
-            setReady(false);
+            localStorage.removeItem('userInfo');
+            console.log('logout')
             navigate('/');
         }).catch((err) => {
             toast.error("cannot logout please try again later");
@@ -73,7 +73,6 @@ export default function Header() {
                         </MenuButton>
                         <MenuList >
                             <MenuItem onClick={onOpen}>Profile</MenuItem>
-                            <MenuDivider />
                             <MenuItem onClick={logout}>Logout</MenuItem>
                         </MenuList>
                     </Menu>

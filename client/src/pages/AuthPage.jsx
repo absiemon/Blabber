@@ -9,11 +9,11 @@ export default function AuthPage() {
 
     const navigate = useNavigate();
     const { isLogin, ready, user } = useContext(UserContext);
-    useEffect(()=> {
-        if(user && ready){
-            navigate('/chats')
-        }
-    })
+    // useEffect(()=> {
+    //     if(user && ready){
+    //         navigate('/chats')
+    //     }
+    // })
 
     return (
         <div className='px-4 bg-blue-50 flex flex-col min-h-screen'>
