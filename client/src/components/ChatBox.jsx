@@ -49,7 +49,6 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
             setLoading(true)
             axios.get(`/all-msg/${selectedChat._id}`)
                 .then(({ data }) => {
-                    console.log(data)
                     setMessages(data);
                     setLoading(false);
                 }).catch((err) => {

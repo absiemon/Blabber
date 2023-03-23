@@ -89,7 +89,6 @@ module.exports.getAllUsers = async(req, res) => {
     try{
         const { token } = req.cookies;
         const userData = await getUserDataFromToken(token);
-        console.log(userData);
     
         const user = await User.find(keyword).find({ _id : {$ne: userData.id}}).select("-password");
         res.json(user);

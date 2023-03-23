@@ -23,7 +23,6 @@ export default function Header() {
         await axios.post('/logout').then(() => {
             setUser(null);
             localStorage.removeItem('userInfo');
-            console.log('logout')
             navigate('/');
         }).catch((err) => {
             toast.error("cannot logout please try again later");

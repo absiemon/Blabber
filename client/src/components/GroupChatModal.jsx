@@ -36,7 +36,6 @@ export default function GroupChatModal({ children }) {
         else {
             setLoading(true)
             await axios.get(`/users?search=${query}`).then((res) => {
-                console.log(res.data);
                 setSearchResult(res?.data)
                 setLoading(false)
             }).catch((err) => {
@@ -83,7 +82,6 @@ export default function GroupChatModal({ children }) {
             return;
         }
         const allUsersId = selectedUsers.map((u) =>{ return u._id})
-        console.log(allUsersId)
         await axios.post('/create-group', {
             name: groupChatName,
             users: allUsersId

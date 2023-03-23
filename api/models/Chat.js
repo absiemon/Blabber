@@ -9,7 +9,8 @@ const chatModel = mongoose.Schema({
             ref: "Message",
         },
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        isBlocked: {type: Boolean}
+        isBlocked: {type: Boolean},
+        allMessagesDeleted: [{type: mongoose.Schema.Types.ObjectId, ref: "User" }]
     },
     { timestamps: true }
 );

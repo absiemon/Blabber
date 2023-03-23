@@ -51,7 +51,6 @@ export default function Search() {
         await axios.post('/chat', {
             userId: id
         }).then((res)=>{
-            console.log(res.data);
             toast({
                 position: 'top-right',
                 title: 'User added',
@@ -95,7 +94,7 @@ export default function Search() {
                         {loading ? <SearchLoading/> : (
                             searchResult?.map(user=>{
                                 return(
-                                    <UserListItem key={user._id} user={user} handleFunction={()=> createChat(user_id)}/>
+                                    <UserListItem key={user?._id} user={user} handleFunction={()=> createChat(user?._id)}/>
                                 )
                             })
                         )}

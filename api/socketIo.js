@@ -34,7 +34,6 @@ module.exports = function (server) {
         // as soon as the user changes the chat we will join the user with that chat. room is like chatId
         socket.on('join-chat', (room)=>{
             socket.join(room);
-            console.log('user joined chat'+ room);
         })
 
         // checking if the user is typing something or not

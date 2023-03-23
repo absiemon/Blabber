@@ -4,7 +4,7 @@ import { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
 
 export default function ConfirmationModal({ option, isOpen, onClose, fetchAgain, setFetchAgain }) {
-    const { selectedChat, fetchMsg, setFetchMsg } = useContext(UserContext);
+    const { selectedChat, fetchMsg, setFetchMsg, setSelectedChat } = useContext(UserContext);
     const toast = useToast();
     const [loading, setLoading] = useState(false);
 
@@ -28,6 +28,7 @@ export default function ConfirmationModal({ option, isOpen, onClose, fetchAgain,
                 setLoading(false)
                 toast({ position: 'top-right', title: 'Cleared', description: "Chat has been deleted", status: 'success', duration: 3000, isClosable: true,
                 });
+                setSelectedChat("");
                 setFetchAgain(!fetchAgain);
             }).catch(err=>{
                 setLoading(false)
