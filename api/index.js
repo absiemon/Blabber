@@ -24,6 +24,6 @@ require("./config/db")();
 
 app.use('/api', router);
 
-const server = app.listen(8000);
+const server = app.listen(process.env.PORT || 8000);
 
 socket(server);
