@@ -1,6 +1,7 @@
 const socketio = require('socket.io');
 const cors = require('cors');
-const { getUserDataFromToken } = require('./config/verify.js')
+const { getUserDataFromToken } = require('./config/verify.js');
+const Chat = require('./models/Chat.js');
 
 // function hasId(map, id) {
 //     for (const [key, value] of map.entries()) {
@@ -12,8 +13,8 @@ const { getUserDataFromToken } = require('./config/verify.js')
 // }
 
 // const clients = new Set();
-// let onlineUsers = [];
-// global.users = new Map();
+let onlineUsers = [];
+global.usersMap = new Map();
 
 module.exports = function (server) {
     const io = socketio(server, {
@@ -27,7 +28,10 @@ module.exports = function (server) {
     io.on('connection', async (socket) => {
         // creating a room as soon as the user connects to the socket
         socket.on('setup', (user)=>{
-            socket.join(user?._id)
+            socket.join(user?._id);
+            if(!onlineUsers.includes(user?._id)) onlineUsers.push(user?._id);
+            usersMap.set(socket.id, user?._id);
+            console.log(usersMap);
             socket.emit('connected')
         })
 
@@ -55,8 +59,18 @@ module.exports = function (server) {
         })
         
         // when user sends a message
-        socket.on('new-msg', (newMsg)=>{    
+        socket.on('new-msg', async (newMsg)=>{    
             let chat = newMsg.chat;
+            // if user is not online then push the user inside unseenMessages
+            let chatDoc = await Chat.findOneAndUpdate(
+                { _id: chat._id },
+                { $addToSet: { 'unSeenMessages.user': { $each: chat.users.filter(u => !onlineUsers.includes(u._id)).map(u => u._id) } } },
+                { new: true }
+            );
+            if(chatDoc.unSeenMessages.user.length > 0) {
+                chatDoc.unSeenMessages.count++;
+                await chatDoc.save();
+            }
 
             // we are not supposed to send the msg to the sender
             chat.users.map(user=>{
@@ -66,6 +80,13 @@ module.exports = function (server) {
                 socket.in(user._id).emit("msg-recieved", newMsg)
             })
         })
+
+        socket.on("disconnect", (callback) => {
+            const userId = usersMap.get(socket.id);
+            if(onlineUsers.includes(userId)){
+                onlineUsers.pop(userId);
+            }
+        });
         
     });
 }
