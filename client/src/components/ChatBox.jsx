@@ -11,13 +11,13 @@ import Lottie from 'react-lottie';
 import send from "../assets/send.png";
 import animationData from "../typing.json"
 import ChatSettings from "./ChatSettings";
-const url = "http://localhost:8000";
-// const url = "https://blabber-alpha.vercel.app/";
-let socket, selectedChatCompare;
+// const url = "http://localhost:8000";
+// // const url = "https://blabber-alpha.vercel.app/";
+let socket1, selectedChatCompare;
 
 export default function ChatBox({ fetchAgain, setFetchAgain }) {
 
-    const { user, selectedChat, setSelectedChat, notification, setNotification, fetchMsg } = useContext(UserContext);
+    const { user, selectedChat, setSelectedChat, notification, setNotification, fetchMsg, socket } = useContext(UserContext);
     const toast = useToast();
     const [newMsg, setNewMsg] = useState('');
     const [messages, setMessages] = useState([]);
@@ -35,7 +35,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
         },
     };
     useEffect(() => {
-        socket = io(url);
+        // socket = io(url);
         socket.emit("setup", user);
         socket.on('connected', () => {
             setSocketConnected(true);
@@ -144,7 +144,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                             <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                         }
                     </Box>
-                    <div className={`overflow-scroll flex flex-col ${loading && 'items-center justify-center'}`} style={{ height: '100%', width: '100%', justifyContent:'flex-end' }} >
+                    <div className={`overflow-scroll flex flex-col ${loading && 'items-center justify-center'}`} style={{ height: '83%', width: '100%', justifyContent:'flex-end' }} >
                         {loading ?
                             <Spinner size="xl" w="20" h="20" />
                             :

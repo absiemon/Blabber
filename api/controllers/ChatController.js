@@ -8,7 +8,6 @@ module.exports.chats = async (req, res) => {
     const { userId } = req.body;
     const { token } = req.cookies;
     const userData = await getUserDataFromToken(token);
-
     if (!userId) {
         return res.status(400).json(null);
     }
@@ -38,6 +37,7 @@ module.exports.chats = async (req, res) => {
             users: [userData.id, userId]
         }
         try {
+            console.log(chatData)
             const createdChat = await Chat.create(chatData);
             const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
                 "users",
@@ -46,6 +46,7 @@ module.exports.chats = async (req, res) => {
             res.status(200).json(FullChat)
 
         } catch (err) {
+            console.log(err)
             res.status(422).json(err);
         }
     }

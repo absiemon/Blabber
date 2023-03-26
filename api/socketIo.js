@@ -2,6 +2,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 const { getUserDataFromToken } = require('./config/verify.js');
 const Chat = require('./models/Chat.js');
+const { default: mongoose } = require('mongoose');
 
 // function hasId(map, id) {
 //     for (const [key, value] of map.entries()) {
@@ -36,7 +37,7 @@ module.exports = function (server) {
 
         // as soon as the user changes the chat we will join the user with that chat. room is like chatId
         socket.on('join-chat', async(room)=>{
-            const chat = await Chat.findById(room);
+            let chat = await Chat.findById(room);
             const userId = usersMap.get(socket.id);
             if(chat.unSeenMessages){
                 if(chat.unSeenMessages.user.includes(userId)){
@@ -48,6 +49,10 @@ module.exports = function (server) {
                     await chat.save();
                 }
             }
+            chat = await Chat.findById(room).populate(
+                "users",
+                "-password"
+            );
             socket.join(room);
             socket.emit("new-chat", chat);
         })
@@ -83,7 +88,6 @@ module.exports = function (server) {
                 chatDoc.unSeenMessages.count++;
                 await chatDoc.save();
             }
-
             // we are not supposed to send the msg to the sender
             chat.users.map(user=>{
                 if(user?._id === newMsg?.sender._id){ return}

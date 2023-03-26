@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
+import { io } from "socket.io-client";
+const url = "http://localhost:8000";
 export const UserContext  = createContext({});
 
 export function UserContextProvider({children}){
@@ -11,7 +13,7 @@ export function UserContextProvider({children}){
     const [selectedChat, setSelectedChat] = useState();
     const [chats, setChats] = useState([]);
     const [notification, setNotification] = useState([])
-    
+    const [socket, setSocket] = useState(null);
     const [fetchMsg, setFetchMsg] = useState(false);
 
     useEffect(() => {
@@ -22,6 +24,8 @@ export function UserContextProvider({children}){
             navigate('/');
         }
         else{
+            const newSocket = io(url);
+            setSocket(newSocket);
             navigate('/chats')
         }
         // if(!user){
@@ -35,7 +39,7 @@ export function UserContextProvider({children}){
     }, []);
 
     return(
-        <UserContext.Provider value={{user, setUser, isLogin, setIsLogin, selectedChat, setSelectedChat, chats, setChats,notification, setNotification, fetchMsg, setFetchMsg }}>
+        <UserContext.Provider value={{user, setUser, isLogin, setIsLogin, selectedChat, setSelectedChat, chats, setChats,notification, setNotification, fetchMsg, setFetchMsg,socket }}>
             {children}
         </UserContext.Provider>
     )

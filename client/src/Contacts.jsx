@@ -10,7 +10,7 @@ import usersIcon from './assets/usersIcon.png';
 import GroupChatModal from "./components/GroupChatModal";
 
 export default function Contacts({fetchAgain, setFetchAgain}) {
-    const { user, selectedChat, setSelectedChat, chats, setChats } = useContext(UserContext);
+    const { user, selectedChat, setSelectedChat, chats, setChats, socket } = useContext(UserContext);
     const [loading, setLoading] = useState(false);
     const toast = useToast();
     
@@ -34,7 +34,14 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
     }, [fetchAgain])
 
     useEffect(()=>{
-        
+        socket?.on("new-chat", (newChat)=>{
+            console.log(newChat)
+            let nc = chats?.filter(chat=>{
+                chat?._id !== newChat?._id;
+            })
+            
+            nc.length >0 && setChats([...nc, newChat]);
+        })
     })
 
     function randomColor(id) {
@@ -62,14 +69,14 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
                         <Stack overflowY="scroll">
                             {chats?.map((chat) => (
                                 <div key={chat?._id} onClick={()=> handleSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
-                                    {(chat._id === selectedChat?._id) && (
+                                    {(chat?._id === selectedChat?._id) && (
                                         <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
                                     )}
                                     <div className="flex gap-2 py-3 pl-2 items-center">
                                         <div className={"w-10 h-10 rounded-full flex items-center " + randomColor(chat._id)} >
                                             <div className="primary text-center w-full mb-1 opacity-70">
-                                            {!chat.isGroupChat
-                                            ? getSender(user, chat.users)[0]
+                                            {!chat?.isGroupChat
+                                            ? getSender(user, chat?.users)[0]
                                             : <img src={usersIcon} alt="icon" className="h-7 w-7" style={{margin:'4px 0px 0px 6px'}}/>}
                                             </div>
                                         </div>
