@@ -12,7 +12,7 @@ const chatModel = mongoose.Schema({
         isBlocked: {type: Boolean},
         allMessagesDeleted: [{type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         unSeenMessages:{
-            user: [{type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+            user: [{type: String}],
             count: {type:Number, default: 0}
         },
         // unSeenMessages:[

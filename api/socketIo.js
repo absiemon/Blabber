@@ -31,13 +31,25 @@ module.exports = function (server) {
             socket.join(user?._id);
             if(!onlineUsers.includes(user?._id)) onlineUsers.push(user?._id);
             usersMap.set(socket.id, user?._id);
-            console.log(usersMap);
             socket.emit('connected')
         })
 
         // as soon as the user changes the chat we will join the user with that chat. room is like chatId
-        socket.on('join-chat', (room)=>{
+        socket.on('join-chat', async(room)=>{
+            const chat = await Chat.findById(room);
+            const userId = usersMap.get(socket.id);
+            if(chat.unSeenMessages){
+                if(chat.unSeenMessages.user.includes(userId)){
+                    chat.unSeenMessages.user.pull(userId);
+                    await chat.save();
+                }
+                if(chat.unSeenMessages.user.length === 0){
+                    chat.unSeenMessages.count = 0;
+                    await chat.save();
+                }
+            }
             socket.join(room);
+            socket.emit("new-chat", chat);
         })
 
         // checking if the user is typing something or not
@@ -64,7 +76,7 @@ module.exports = function (server) {
             // if user is not online then push the user inside unseenMessages
             let chatDoc = await Chat.findOneAndUpdate(
                 { _id: chat._id },
-                { $addToSet: { 'unSeenMessages.user': { $each: chat.users.filter(u => !onlineUsers.includes(u._id)).map(u => u._id) } } },
+                { $addToSet: { 'unSeenMessages.user': { $each: chat.users.filter(u => !onlineUsers.includes(u._id.toString())).map(u => u._id) } } },
                 { new: true }
             );
             if(chatDoc.unSeenMessages.user.length > 0) {

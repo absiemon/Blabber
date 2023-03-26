@@ -9,7 +9,7 @@ import { getSender } from './config/ChatLogic.js'
 import usersIcon from './assets/usersIcon.png';
 import GroupChatModal from "./components/GroupChatModal";
 
-export default function Contacts({fetchAgain}) {
+export default function Contacts({fetchAgain, setFetchAgain}) {
     const { user, selectedChat, setSelectedChat, chats, setChats } = useContext(UserContext);
     const [loading, setLoading] = useState(false);
     const toast = useToast();
@@ -33,11 +33,19 @@ export default function Contacts({fetchAgain}) {
         })
     }, [fetchAgain])
 
+    useEffect(()=>{
+        
+    })
+
     function randomColor(id) {
         const colors = ['bg-red-200', 'bg-green-200', 'bg-blue-200', 'bg-orange-200', 'bg-lime-200', 'bg-emerald-200'];
         const userIdbase10 = parseInt(id, 16);
         const colorIndex = userIdbase10 % colors.length;
         return colors[colorIndex];
+    }
+
+    const handleSelectedChat = (chat) => {
+        setSelectedChat(chat);
     }
 
     return (
@@ -53,7 +61,7 @@ export default function Contacts({fetchAgain}) {
                     {!loading ? chats && (
                         <Stack overflowY="scroll">
                             {chats?.map((chat) => (
-                                <div key={chat?._id} onClick={() => setSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
+                                <div key={chat?._id} onClick={()=> handleSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
                                     {(chat._id === selectedChat?._id) && (
                                         <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
                                     )}
@@ -70,6 +78,9 @@ export default function Contacts({fetchAgain}) {
                                             ? getSender(user, chat.users)
                                             : chat.chatName}
                                         </div>
+                                        {chat.unSeenMessages.user.includes(user._id) && (
+                                            <div className="w-6 h-6 rounded-full bg-green-600 text-white text-center">{chat.unSeenMessages.count}</div>
+                                        )}
                                     </div>
                                 </div>
                             ))}

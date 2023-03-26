@@ -2,6 +2,7 @@ const { getUserDataFromToken } = require("../config/verify");
 const Chat = require("../models/Chat");
 const Message = require("../models/Message");
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 module.exports.sendMessage = async(req, res)=>{
     const {token} = req.cookies;
@@ -39,6 +40,17 @@ module.exports.getAllMessages = async(req, res)=>{
     try {
         const userData = await getUserDataFromToken(token);
         const chat = await Chat.findById(id);
+        if(chat.unSeenMessages){
+            if(chat.unSeenMessages.user.includes(userData.id)){
+                chat.unSeenMessages.user.pull(userData.id);
+                await chat.save();
+            }
+            if(chat.unSeenMessages.user.length === 0){
+                chat.unSeenMessages.count = 0;
+                await chat.save();
+            }
+        }
+
         if(chat.allMessagesDeleted.includes(userData.id)){
             res.json([]);
         }
