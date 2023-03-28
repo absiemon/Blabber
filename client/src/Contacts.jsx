@@ -85,9 +85,9 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
                                             ? getSender(user, chat.users)
                                             : chat.chatName}
                                         </div>
-                                        {chat.unSeenMessages.user.includes(user._id) && (
+                                        {/* {chat.unSeenMessages.user.includes(user._id) && (
                                             <div className="w-6 h-6 rounded-full bg-green-600 text-white text-center">{chat.unSeenMessages.count}</div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             ))}

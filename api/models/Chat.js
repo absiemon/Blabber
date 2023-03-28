@@ -11,13 +11,13 @@ const chatModel = mongoose.Schema({
         groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         isBlocked: {type: Boolean},
         allMessagesDeleted: [{type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        unSeenMessages:{
-            user: [{type: String }],
-            count: {type:Number, default: 0}
-        },
-        // unSeenMessages:[
-        //     {user:{type: mongoose.Schema.Types.ObjectId, ref: "User" }, count: {type: Number, default:0}}
-        // ]
+        // unSeenMessages:{
+        //     user: [{type: String }],
+        //     count: {type:Number, default: 0}
+        // },
+        unSeenMessages:[
+            {user:{type: String }, count: {type: Number, default:0}}
+        ]
     },
     { timestamps: true }
 );
