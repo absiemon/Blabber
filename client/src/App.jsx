@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom"
-import ChatPage from "./pages/ChatPage";
 import axios from "axios";
 import { UserContextProvider } from './UserContext';
 import AuthPage from "./pages/AuthPage";

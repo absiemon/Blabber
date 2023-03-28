@@ -37,24 +37,19 @@ module.exports = function (server) {
 
         // as soon as the user changes the chat we will join the user with that chat. room is like chatId
         socket.on('join-chat', async (room) => {
-            // let chat = await Chat.findById(room);
-            // const userId = usersMap.get(socket.id);
-            // if(chat.unSeenMessages){
-            //     if(chat.unSeenMessages.user.includes(userId)){
-            //         chat.unSeenMessages.user.pull(userId);
-            //         await chat.save();
-            //     }
-            //     if(chat.unSeenMessages.user.length === 0){
-            //         chat.unSeenMessages.count = 0;
-            //         await chat.save();
-            //     }
-            // }
-            // chat = await Chat.findById(room).populate(
-            //     "users",
-            //     "-password"
-            // );
+            let chat = await Chat.findById(room);
+            const userId = usersMap.get(socket.id);
+            if (chat.unSeenMessages.length >0) {
+                
+                chat.unSeenMessages.pull({ _id: userId });
+                await chat.save();
+            }
+            chat = await Chat.findById(room).populate(
+                "users",
+                "-password"
+            );
             socket.join(room);
-            // socket.emit("new-chat", chat);
+            socket.emit("new-chat", chat);
         })
 
         // checking if the user is typing something or not
@@ -82,20 +77,10 @@ module.exports = function (server) {
 
             let offlineUsers = chat.users.filter(u => !onlineUsers.includes(u._id.toString()));
             const count = 1;
-            // const updatePush = {
-            //     $addToSet: { 'unSeenMessages': { $each: offlineUsers } }
-            // };
-
-            // const updateInc = {
-            //     $inc: { 'unSeenMessages.$[].count': count }
-            // };
-
-            // let updatedChat = await Chat.updateOne({ _id: chat._id }, updatePush);
-            // updatedChat = await Chat.updateOne({ _id: chat._id }, updateInc);
 
             // ``$addToSet`` matches whole value, so we check users whose record isn't there manually.
-            const existingUnSeenUsers = chat.unSeenMessages.map(({_id}) => _id);
-            const unSeenUsersToAdd = offlineUsers.filter(({_id}) => !existingUnSeenUsers.includes(_id.toString()));
+            const existingUnSeenUsers = chat.unSeenMessages.map(({ _id }) => _id);
+            const unSeenUsersToAdd = offlineUsers.filter(({ _id }) => !existingUnSeenUsers.includes(_id.toString()));
 
             if (unSeenUsersToAdd.length > 0) {
                 const addPush = {
@@ -108,12 +93,11 @@ module.exports = function (server) {
                 { '$inc': { 'unSeenMessages.$[elem].count': count, } },
                 {
                     arrayFilters: [
-                        {'elem._id': { '$in': offlineUsers.map(({'_id': id}) => id) } }
+                        { 'elem._id': { '$in': offlineUsers.map(({ '_id': id }) => id) } }
                     ]
                 }
             );
 
-            console.log(updatedChat)   
             // we are not supposed to send the msg to the sender
             chat.users.map(user => {
                 if (user?._id === newMsg?.sender._id) { return }

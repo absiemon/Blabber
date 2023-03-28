@@ -34,15 +34,13 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
     }, [fetchAgain])
 
     useEffect(()=>{
-        socket?.on("new-chat", (newChat)=>{
-            console.log(newChat)
-            let nc = chats?.filter(chat=>{
-                chat?._id !== newChat?._id;
+        socket?.on("new-chat", async(newChat)=>{
+            let nc = await chats.filter(chat=>{
+                return chat._id !== newChat._id;
             })
-            
-            nc.length >0 && setChats([...nc, newChat]);
+            setChats([newChat, ...nc]);
         })
-    })
+    }, [chats])
 
     function randomColor(id) {
         const colors = ['bg-red-200', 'bg-green-200', 'bg-blue-200', 'bg-orange-200', 'bg-lime-200', 'bg-emerald-200'];
@@ -85,9 +83,13 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
                                             ? getSender(user, chat.users)
                                             : chat.chatName}
                                         </div>
-                                        {/* {chat.unSeenMessages.user.includes(user._id) && (
-                                            <div className="w-6 h-6 rounded-full bg-green-600 text-white text-center">{chat.unSeenMessages.count}</div>
-                                        )} */}
+                                        {chat.unSeenMessages.map(({ count, _id})=>{
+                                            if(_id === user._id) {
+                                                return(
+                                                    <div className="w-6 h-6 rounded-full bg-green-600 text-white text-center">{count}</div>
+                                                )
+                                            }
+                                        })}
                                     </div>
                                 </div>
                             ))}

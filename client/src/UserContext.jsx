@@ -2,7 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import { io } from "socket.io-client";
-const url = "http://localhost:8000";
+// const url = "http://localhost:8000";
+ const url = "https://blabber-alpha.vercel.app/";
 export const UserContext  = createContext({});
 
 export function UserContextProvider({children}){

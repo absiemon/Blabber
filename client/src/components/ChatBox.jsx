@@ -11,9 +11,8 @@ import Lottie from 'react-lottie';
 import send from "../assets/send.png";
 import animationData from "../typing.json"
 import ChatSettings from "./ChatSettings";
-// const url = "http://localhost:8000";
-// // const url = "https://blabber-alpha.vercel.app/";
-let socket1, selectedChatCompare;
+
+let selectedChatCompare;
 
 export default function ChatBox({ fetchAgain, setFetchAgain }) {
 

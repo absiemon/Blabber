@@ -63,7 +63,7 @@ export default function Search() {
             if(!chats.find((c)=> c?._id === res?.data?._id)){
                 setChats([res.data, ...chats])
             }
-            setSelectedChat(res.data);
+            // setSelectedChat(res.data);
             onClose()
         }).catch(err=>{
             toast({
