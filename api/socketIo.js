@@ -82,16 +82,36 @@ module.exports = function (server) {
 
             let offlineUsers = chat.users.filter(u => !onlineUsers.includes(u._id.toString()));
             const count = 1;
-            const updatePush = {
-                $addToSet: { 'unSeenMessages': { $each: offlineUsers } }
-            };
+            // const updatePush = {
+            //     $addToSet: { 'unSeenMessages': { $each: offlineUsers } }
+            // };
 
-            const updateInc = {
-                $inc: { 'unSeenMessages.$[].count': count }
-            };
+            // const updateInc = {
+            //     $inc: { 'unSeenMessages.$[].count': count }
+            // };
 
-            let updatedChat = await Chat.updateOne({ _id: chat._id }, updatePush);
-            updatedChat = await Chat.updateOne({ _id: chat._id }, updateInc);
+            // let updatedChat = await Chat.updateOne({ _id: chat._id }, updatePush);
+            // updatedChat = await Chat.updateOne({ _id: chat._id }, updateInc);
+
+            // ``$addToSet`` matches whole value, so we check users whose record isn't there manually.
+            const existingUnSeenUsers = chat.unSeenMessages.map(({_id}) => _id);
+            const unSeenUsersToAdd = offlineUsers.filter(({_id}) => !existingUnSeenUsers.includes(_id.toString()));
+
+            if (unSeenUsersToAdd.length > 0) {
+                const addPush = {
+                    '$push': { 'unSeenMessages': { '$each': unSeenUsersToAdd } }
+                };
+                await Chat.updateOne({ '_id': chat._id }, addPush);
+            }
+            let updatedChat = await Chat.updateOne(
+                { '_id': chat._id, },
+                { '$inc': { 'unSeenMessages.$[elem].count': count, } },
+                {
+                    arrayFilters: [
+                        {'elem._id': { '$in': offlineUsers.map(({'_id': id}) => id) } }
+                    ]
+                }
+            );
 
             console.log(updatedChat)   
             // we are not supposed to send the msg to the sender
