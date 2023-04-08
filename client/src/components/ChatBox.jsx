@@ -35,7 +35,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
     };
     useEffect(() => {
         // socket = io(url);
-        socket.emit("setup", user);
+        socket?.emit("setup", user);
         socket.on('connected', () => {
             setSocketConnected(true);
         })

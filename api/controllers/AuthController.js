@@ -41,7 +41,7 @@ module.exports.login = async(req, res) => {
                         email : user.email,
                         mobile : user.mobile
                     }
-                    return res.cookie('token', token).json(obj);
+                    return res.cookie('token', token, { sameSite: 'none', secure: true }).json(obj);
                 })
             }
             else {

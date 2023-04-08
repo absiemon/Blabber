@@ -4,12 +4,11 @@ const cookieParser = require('cookie-parser');
 const router = require('./router/router');
 const socket = require('./socketIo.js');
 require('dotenv').config();
-// const port = 8000;
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());    // for reading cookies
-const allowedOrigins = ['http://127.0.0.1:5173', 'https://blabber-alpha.vercel.app'];
+const allowedOrigins = ['http://127.0.0.1:5173', 'https://blabber-alpha.vercel.app', 'http://localhost:5173'];
 const corsOptions = {
     credentials: true,
     origin: allowedOrigins,
@@ -23,7 +22,8 @@ app.use(cors(corsOptions));
 require("./config/db")();
 
 app.use('/api', router);
+const port = process.env.PORT || 8000;
 
-const server = app.listen(8000);
+const server = app.listen(port);
 
 socket(server);
