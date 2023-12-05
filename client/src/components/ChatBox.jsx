@@ -56,7 +56,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
                     toast({ title: "Cannot fetch messages", status: "error", duration: 3000, isClosable: true, position: "top-right", });
                 })
 
-            socket.emit('join-chat', selectedChat._id);
+            socket?.emit('join-chat', selectedChat._id);
             selectedChatCompare = selectedChat;
         }
 
@@ -84,7 +84,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
 
         if (!typing) {
             setTyping(true);
-            socket.emit('typing', { selectedChat, user });
+            socket?.emit('typing', { selectedChat, user });
         }
         let lastTypingTime = new Date().getTime();
         const timer = 3000;
@@ -93,7 +93,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
             let timeDiff = currentTime - lastTypingTime;
 
             if (timeDiff >= timer && typing) {
-                socket.emit('stop-typing', { selectedChat, user });
+                socket?.emit('stop-typing', { selectedChat, user });
                 setTyping(false);
             }
         }, timer)
@@ -104,13 +104,13 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
         if (!newMsg) {
             return;
         }
-        socket.emit('stop-typing', { selectedChat, user });
+        socket?.emit('stop-typing', { selectedChat, user });
         await axios.post('/new-msg', {
             content: newMsg,
             chatId: selectedChat._id
         }).then(({ data }) => {
             setNewMsg("");
-            socket.emit('new-msg', data);
+            socket?.emit('new-msg', data);
             setMessages([...messages, data]);
         }).catch((err) => {
             toast({ title: "Cannot send message", status: "error", duration: 3000, isClosable: true, position: "top-right", });
