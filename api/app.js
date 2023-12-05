@@ -21,9 +21,9 @@ app.use(cors(corsOptions));
 
 require("./config/db")();
 
-app.use('/', (req, res)=>{
-    return res.json({message: "Server working"})
-})
+// app.use('/', (req, res)=>{
+//     return res.json({message: "Server working"})
+// })
 app.use('/api', router);
 const port = process.env.PORT || 8000;
 
