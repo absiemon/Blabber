@@ -36,11 +36,11 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
     useEffect(() => {
         // socket = io(url);
         socket?.emit("setup", user);
-        socket.on('connected', () => {
+        socket?.on('connected', () => {
             setSocketConnected(true);
         })
-        socket.on('typing', () => setIsTyping(true));
-        socket.on('stop-typing', () => setIsTyping(false))
+        socket?.on('typing', () => setIsTyping(true));
+        socket?.on('stop-typing', () => setIsTyping(false))
     }, [])
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export default function ChatBox({ fetchAgain, setFetchAgain }) {
     }, [selectedChat, fetchMsg])
 
     useEffect(() => {
-        socket.on('msg-recieved', (newMsg) => {
+        socket?.on('msg-recieved', (newMsg) => {
             if (!selectedChatCompare || selectedChatCompare._id !== newMsg.chat._id) {
                 // means user is not inside that chat, give notification
                 if(!notification.includes(newMsg)){
