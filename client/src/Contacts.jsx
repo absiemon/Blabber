@@ -35,8 +35,8 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
 
     useEffect(()=>{
         socket?.on("new-chat", async(newChat)=>{
-            let nc = await chats.filter(chat=>{
-                return chat._id !== newChat._id;
+            let nc = await chats?.filter(chat=>{
+                return chat?._id !== newChat?._id;
             })
             setChats([newChat, ...nc]);
         })
@@ -65,8 +65,8 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
                 <Box d="flex" flexDir="column" p={3}  w="100%" h="100%" borderRadius="lg" overflowY="hidden">
                     {!loading ? chats && (
                         <Stack overflowY="scroll">
-                            {chats?.map((chat) => (
-                                <div key={chat?._id} onClick={()=> handleSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat._id === selectedChat?._id ? 'bg-blue-100' : '')} >
+                            {chats && chats.length>0 && chats?.map((chat) => (
+                                <div key={chat?._id} onClick={()=> handleSelectedChat(chat)} className={"border-b border-gray-200 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-200 " + (chat?._id === selectedChat?._id ? 'bg-blue-100' : '')} >
                                     {(chat?._id === selectedChat?._id) && (
                                         <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
                                     )}
@@ -83,7 +83,7 @@ export default function Contacts({fetchAgain, setFetchAgain}) {
                                             ? getSender(user, chat.users)
                                             : chat.chatName}
                                         </div>
-                                        {chat.unSeenMessages.map(({ count, _id})=>{
+                                        {chat?.unSeenMessages?.map(({ count, _id})=>{
                                             if(_id === user._id) {
                                                 return(
                                                     <div className="w-6 h-6 rounded-full bg-green-600 text-white text-center">{count}</div>
