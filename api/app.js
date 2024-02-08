@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());    // for reading cookies
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ['https://blabber-alpha.vercel.app'];
 const corsOptions = {
     credentials: true,
     origin: allowedOrigins,
