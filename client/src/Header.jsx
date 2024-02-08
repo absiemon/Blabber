@@ -11,8 +11,6 @@ import {
 import { HamburgerIcon, BellIcon } from '@chakra-ui/icons'
 import ProfileModal from "./components/ProfileModal";
 import { getSender } from "./config/ChatLogic";
-import NotificationBadge from 'react-notification-badge';
-import {Effect} from 'react-notification-badge';
 
 
 export default function Header() {
@@ -45,10 +43,10 @@ export default function Header() {
                 <div className="flex gap-2 justify-end items-end">
                     <Menu>
                         <MenuButton p={1}>
-                            <NotificationBadge
+                            {/* <NotificationBadge
                                 count={notification.length}
                                 effect={Effect.SCALE}
-                            />
+                            /> */}
                             <BellIcon fontSize={'2xl'} m={1} />
                         </MenuButton>
                         <MenuList pl={2}>
